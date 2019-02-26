@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/manyminds/api2go/jsonapi"
-	"github.com/manyminds/api2go/routing"
+	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
+	"git.charm2012.local/gitbucket/Charm/api2go/routing"
 )
 
 const (
@@ -739,7 +739,7 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 	}
 
 	id := params["id"]
-	obj, err := source.FindOne(id, buildRequest(c, r))
+	obj, err := source.FindOneWithRelations(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -873,7 +873,7 @@ func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWrit
 
 	id := params["id"]
 
-	response, err := source.FindOne(id, buildRequest(c, r))
+	response, err := source.FindOneWithRelations(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -932,9 +932,13 @@ func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWrit
 		_, err = source.Update(targetObj, buildRequest(c, r))
 	}
 
+	if err != nil {
+		return err
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 
-	return err
+	return nil
 }
 
 func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, relation jsonapi.Reference) error {
@@ -951,7 +955,7 @@ func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseW
 
 	id := params["id"]
 
-	response, err := source.FindOne(id, buildRequest(c, r))
+	response, err := source.FindOneWithRelations(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -1011,9 +1015,13 @@ func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseW
 		_, err = source.Update(targetObj, buildRequest(c, r))
 	}
 
+	if err != nil {
+		return err
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 
-	return err
+	return nil
 }
 
 // returns a pointer to an interface{} struct

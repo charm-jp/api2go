@@ -3,7 +3,7 @@ package api2go
 import (
 	"net/http"
 
-	"github.com/manyminds/api2go/jsonapi"
+	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
 )
 
 // The ResourceGetter interface MUST be implemented in order to generate the single GET route and related
@@ -11,6 +11,7 @@ type ResourceGetter interface {
 	// FindOne returns an object by its ID
 	// Possible Responder success status code 200
 	FindOne(ID string, req Request) (Responder, error)
+	FindOneWithRelations(ID string, req Request) (Responder, error)
 }
 
 // The CRUD interface embed all interfaces at once: `ResourceCreator`, `ResourceDeleter`, `ResourceUpdater` (which includes `ResourceGetter`)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/manyminds/api2go/examples/model"
+	"git.charm2012.local/gitbucket/Charm/api2go/examples/model"
 )
 
 // sorting
