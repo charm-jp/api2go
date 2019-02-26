@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/manyminds/api2go/jsonapi"
+	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
 )
 
 // The Response struct implements api2go.Responder and can be used as a default
