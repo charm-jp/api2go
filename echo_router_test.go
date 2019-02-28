@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"git.charm2012.local/gitbucket/Charm/api2go/routing"
 	"github.com/labstack/echo"
-	"github.com/manyminds/api2go/routing"
 )
 
 func customHTTPErrorHandler(err error, c echo.Context) {
