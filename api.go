@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/manyminds/api2go/jsonapi"
-	"github.com/manyminds/api2go/routing"
+	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
+	"git.charm2012.local/gitbucket/Charm/api2go/routing"
 )
 
 const (

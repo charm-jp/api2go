@@ -3,7 +3,7 @@ package api2go
 import (
 	"net/http"
 
-	"github.com/manyminds/api2go/jsonapi"
+	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
 )
 
 // The ResourceGetter interface MUST be implemented in order to generate the single GET route and related
