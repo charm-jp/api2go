@@ -11,7 +11,6 @@ type ResourceGetter interface {
 	// FindOne returns an object by its ID
 	// Possible Responder success status code 200
 	FindOne(ID string, req Request) (Responder, error)
-	FindOneWithRelations(ID string, req Request) (Responder, error)
 }
 
 // The CRUD interface embed all interfaces at once: `ResourceCreator`, `ResourceDeleter`, `ResourceUpdater` (which includes `ResourceGetter`)
@@ -90,6 +89,7 @@ type ObjectInitializer interface {
 //requests for one api2go instance.
 type URLResolver interface {
 	GetBaseURL() string
+	GetRequest() http.Request
 }
 
 // RequestAwareURLResolver allows you to dynamically change

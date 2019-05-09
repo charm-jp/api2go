@@ -360,6 +360,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 
 			api.router.Handle("PATCH", baseURL+"/:id/relationships/"+relation.Name, func(relation jsonapi.Reference) routing.HandlerFunc {
 				return func(w http.ResponseWriter, r *http.Request, params map[string]string, context map[string]interface{}) {
+					info := requestInfo(r, api)
 					c := api.contextPool.Get().(APIContexter)
 					c.Reset()
 
@@ -368,7 +369,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					}
 
 					api.middlewareChain(c, w, r)
-					err := res.handleReplaceRelation(c, w, r, params, relation)
+					err := res.handleReplaceRelation(c, w, r, params, *info, relation)
 					api.contextPool.Put(c)
 					if err != nil {
 						handleError(err, w, r, api.ContentType)
@@ -380,6 +381,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 				// generate additional routes to manipulate to-many relationships
 				api.router.Handle("POST", baseURL+"/:id/relationships/"+relation.Name, func(relation jsonapi.Reference) routing.HandlerFunc {
 					return func(w http.ResponseWriter, r *http.Request, params map[string]string, context map[string]interface{}) {
+						info := requestInfo(r, api)
 						c := api.contextPool.Get().(APIContexter)
 						c.Reset()
 
@@ -388,7 +390,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						}
 
 						api.middlewareChain(c, w, r)
-						err := res.handleAddToManyRelation(c, w, r, params, relation)
+						err := res.handleAddToManyRelation(c, w, r, params, *info, relation)
 						api.contextPool.Put(c)
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
@@ -398,6 +400,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 
 				api.router.Handle("DELETE", baseURL+"/:id/relationships/"+relation.Name, func(relation jsonapi.Reference) routing.HandlerFunc {
 					return func(w http.ResponseWriter, r *http.Request, params map[string]string, context map[string]interface{}) {
+						info := requestInfo(r, api)
 						c := api.contextPool.Get().(APIContexter)
 						c.Reset()
 
@@ -406,7 +409,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						}
 
 						api.middlewareChain(c, w, r)
-						err := res.handleDeleteToManyRelation(c, w, r, params, relation)
+						err := res.handleDeleteToManyRelation(c, w, r, params, *info, relation)
 						api.contextPool.Put(c)
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
@@ -438,6 +441,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 
 	if _, ok := source.(ResourceDeleter); ok {
 		api.router.Handle("DELETE", baseURL+"/:id", func(w http.ResponseWriter, r *http.Request, params map[string]string, context map[string]interface{}) {
+			info := requestInfo(r, api)
 			c := api.contextPool.Get().(APIContexter)
 			c.Reset()
 
@@ -446,7 +450,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			}
 
 			api.middlewareChain(c, w, r)
-			err := res.handleDelete(c, w, r, params)
+			err := res.handleDelete(c, w, r, params, *info)
 			api.contextPool.Put(c)
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
@@ -739,7 +743,7 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 	}
 
 	id := params["id"]
-	obj, err := source.FindOneWithRelations(id, buildRequest(c, r))
+	obj, err := source.FindOne(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -803,7 +807,7 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 	}
 }
 
-func (res *resource) handleReplaceRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, relation jsonapi.Reference) error {
+func (res *resource) handleReplaceRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, info information, relation jsonapi.Reference) error {
 	source, ok := res.source.(ResourceUpdater)
 
 	if !ok {
@@ -859,7 +863,7 @@ func (res *resource) handleReplaceRelation(c APIContexter, w http.ResponseWriter
 	return err
 }
 
-func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, relation jsonapi.Reference) error {
+func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, info information, relation jsonapi.Reference) error {
 	source, ok := res.source.(ResourceUpdater)
 
 	if !ok {
@@ -873,7 +877,7 @@ func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWrit
 
 	id := params["id"]
 
-	response, err := source.FindOneWithRelations(id, buildRequest(c, r))
+	response, err := source.FindOne(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -907,6 +911,8 @@ func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWrit
 		}
 		newID, ok := casted["id"].(string)
 		if !ok {
+			// No ID found. Create the source document
+
 			return errors.New("no id field found inside data object")
 		}
 
@@ -932,16 +938,12 @@ func (res *resource) handleAddToManyRelation(c APIContexter, w http.ResponseWrit
 		_, err = source.Update(targetObj, buildRequest(c, r))
 	}
 
-	if err != nil {
-		return err
-	}
-
 	w.WriteHeader(http.StatusNoContent)
 
-	return nil
+	return err
 }
 
-func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, relation jsonapi.Reference) error {
+func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, info information, relation jsonapi.Reference) error {
 	source, ok := res.source.(ResourceUpdater)
 
 	if !ok {
@@ -955,7 +957,7 @@ func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseW
 
 	id := params["id"]
 
-	response, err := source.FindOneWithRelations(id, buildRequest(c, r))
+	response, err := source.FindOne(id, buildRequest(c, r))
 	if err != nil {
 		return err
 	}
@@ -1015,13 +1017,9 @@ func (res *resource) handleDeleteToManyRelation(c APIContexter, w http.ResponseW
 		_, err = source.Update(targetObj, buildRequest(c, r))
 	}
 
-	if err != nil {
-		return err
-	}
-
 	w.WriteHeader(http.StatusNoContent)
 
-	return nil
+	return err
 }
 
 // returns a pointer to an interface{} struct
@@ -1032,7 +1030,7 @@ func getPointerToStruct(oldObj interface{}) interface{} {
 	return ptr.Interface()
 }
 
-func (res *resource) handleDelete(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string) error {
+func (res *resource) handleDelete(c APIContexter, w http.ResponseWriter, r *http.Request, params map[string]string, info information) error {
 	source, ok := res.source.(ResourceDeleter)
 
 	if !ok {
@@ -1249,7 +1247,7 @@ func processRelationshipsData(data interface{}, linkName string, target interfac
 			return errors.New("target struct must implement interface UnmarshalToOneRelations")
 		}
 
-		target.SetToOneReferenceID(linkName, hasOneID)
+		target.SetToOneReferenceID(linkName, "", hasOneID)
 	} else if data == nil {
 		// this means that a to-one relationship must be deleted
 		target, ok := target.(jsonapi.UnmarshalToOneRelations)
@@ -1257,7 +1255,7 @@ func processRelationshipsData(data interface{}, linkName string, target interfac
 			return errors.New("target struct must implement interface UnmarshalToOneRelations")
 		}
 
-		target.SetToOneReferenceID(linkName, "")
+		target.SetToOneReferenceID(linkName, "", "")
 	} else {
 		hasMany, ok := data.([]interface{})
 		if !ok {

@@ -24,15 +24,24 @@ func (c *callbackResolver) SetRequest(r http.Request) {
 	c.r = r
 }
 
+func (c callbackResolver) GetRequest() http.Request {
+	return c.r
+}
+
 // staticResolver is only used
 // for backwards compatible reasons
 // and might be removed in the future
 type staticResolver struct {
 	baseURL string
+	r       http.Request
 }
 
 func (s staticResolver) GetBaseURL() string {
 	return s.baseURL
+}
+
+func (s staticResolver) GetRequest() http.Request {
+	return s.r
 }
 
 // NewStaticResolver returns a simple resolver that

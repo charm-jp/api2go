@@ -16,7 +16,7 @@ type UnmarshalIdentifier interface {
 // The UnmarshalToOneRelations interface must be implemented to unmarshal
 // to-one relations.
 type UnmarshalToOneRelations interface {
-	SetToOneReferenceID(name, ID string) error
+	SetToOneReferenceID(name, objectType, ID string) error
 }
 
 // The UnmarshalToManyRelations interface must be implemented to unmarshal
@@ -187,7 +187,7 @@ func setRelationshipIDs(relationships map[string]Relationship, target UnmarshalI
 				return fmt.Errorf("struct %s does not implement UnmarshalToOneRelations", reflect.TypeOf(target))
 			}
 
-			castedToOne.SetToOneReferenceID(name, "")
+			castedToOne.SetToOneReferenceID(name, "", "")
 			continue
 		}
 
@@ -197,7 +197,7 @@ func setRelationshipIDs(relationships map[string]Relationship, target UnmarshalI
 			if !ok {
 				return fmt.Errorf("struct %s does not implement UnmarshalToOneRelations", reflect.TypeOf(target))
 			}
-			err := castedToOne.SetToOneReferenceID(name, rel.Data.DataObject.ID)
+			err := castedToOne.SetToOneReferenceID(name, rel.Data.DataObject.Type, rel.Data.DataObject.ID)
 			if err != nil {
 				return err
 			}

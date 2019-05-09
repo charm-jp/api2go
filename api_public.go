@@ -1,12 +1,12 @@
 package api2go
 
 import (
-	"net/http"
-	"strings"
-	"sync"
-
 	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
 	"git.charm2012.local/gitbucket/Charm/api2go/routing"
+	"net/http"
+	"reflect"
+	"strings"
+	"sync"
 )
 
 // HandlerFunc for api2go middlewares
@@ -21,11 +21,23 @@ type API struct {
 	middlewares      []HandlerFunc
 	contextPool      sync.Pool
 	contextAllocator APIContextAllocatorFunc
+	URLResolver      URLResolver
 }
 
 // Handler returns the http.Handler instance for the API.
 func (api API) Handler() http.Handler {
 	return api.router.Handler()
+}
+
+// Lookup the model associated with a named resource
+func (api API) LookupResourceType(name string) reflect.Type {
+	for _, resourceRecord := range api.resources {
+		if resourceRecord.name == name {
+			return resourceRecord.resourceType
+		}
+	}
+
+	return nil
 }
 
 //Router returns the specified router on an api instance
@@ -121,6 +133,7 @@ func newAPI(prefix string, resolver URLResolver, router routing.Routeable) *API 
 		info:             info,
 		middlewares:      make([]HandlerFunc, 0),
 		contextAllocator: nil,
+		URLResolver:      info.resolver,
 	}
 
 	api.contextPool.New = func() interface{} {
