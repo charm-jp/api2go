@@ -5,10 +5,10 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"git.charm2012.local/gitbucket/Charm/api2go"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/model"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/resource"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/storage"
+	"git.charm2012.local/Charm/api2go"
+	"git.charm2012.local/Charm/api2go/examples/model"
+	"git.charm2012.local/Charm/api2go/examples/resource"
+	"git.charm2012.local/Charm/api2go/examples/storage"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

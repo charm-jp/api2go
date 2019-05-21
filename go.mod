@@ -1,4 +1,4 @@
-module git.charm2012.local/gitbucket/Charm/api2go
+module git.charm2012.local/Charm/api2go
 
 go 1.12
 

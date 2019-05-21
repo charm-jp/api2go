@@ -3,7 +3,7 @@ package model
 import (
 	"errors"
 
-	"git.charm2012.local/gitbucket/Charm/api2go/jsonapi"
+	"git.charm2012.local/Charm/api2go/jsonapi"
 )
 
 // User is a generic database user
