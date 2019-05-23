@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"git.charm2012.local/gitbucket/Charm/api2go"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/model"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/storage"
+	"git.charm2012.local/Charm/api2go"
+	"git.charm2012.local/Charm/api2go/examples/model"
+	"git.charm2012.local/Charm/api2go/examples/storage"
 )
 
 // ChocolateResource for api2go routes

@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"git.charm2012.local/gitbucket/Charm/api2go/routing"
+	"git.charm2012.local/Charm/api2go/routing"
 	"github.com/labstack/echo"
 )
 
