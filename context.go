@@ -66,7 +66,7 @@ func (c *APIContext) Value(key interface{}) interface{} {
 	return nil
 }
 
-// Compile time check
+// Compile time check.
 var _ APIContexter = &APIContext{}
 
 // ContextQueryParams fetches the QueryParams if Set
