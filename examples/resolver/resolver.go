@@ -26,3 +26,7 @@ func (m RequestURL) GetBaseURL() string {
 
 	return fmt.Sprintf("https://localhost:%d", m.Port)
 }
+
+func (m RequestURL) GetRequest() http.Request {
+	return m.r
+}

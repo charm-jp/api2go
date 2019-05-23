@@ -35,6 +35,10 @@ func (m *requestURLResolver) SetRequest(r http.Request) {
 	m.r = r
 }
 
+func (m *requestURLResolver) GetRequest() http.Request {
+	return m.r
+}
+
 type invalid string
 
 func (i invalid) GetID() string {
