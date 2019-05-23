@@ -47,7 +47,7 @@ func (c *APIContext) Deadline() (deadline time.Time, ok bool) {
 	return
 }
 
-// Done implements net/context
+// Done implements net/context.
 func (c *APIContext) Done() <-chan struct{} {
 	return nil
 }
