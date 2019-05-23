@@ -71,7 +71,7 @@ var _ = Describe("Errors test", func() {
 			httpErr.Errors = append(httpErr.Errors, errorOne)
 
 			result := marshalHTTPError(httpErr)
-			expected := `{"errors":[{"id":"001","links":{"about":"http://bla/blub"},"status":"500","code":"001","title":"Title must not be empty","detail":"Never occures in real life","source":{"pointer":"#titleField"},"meta":{"creator":"git.charm2012.local/gitbucket/Charm/api2go"}}]}`
+			expected := `{"errors":[{"id":"001","links":{"about":"http://bla/blub"},"status":"500","code":"001","title":"Title must not be empty","detail":"Never occures in real life","source":{"pointer":"#titleField"},"meta":{"creator":"git.charm2012.local/Charm/api2go"}}]}`
 			Expect(result).To(Equal(expected))
 		})
 

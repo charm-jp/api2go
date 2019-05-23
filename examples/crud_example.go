@@ -45,11 +45,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.charm2012.local/gitbucket/Charm/api2go"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/model"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/resolver"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/resource"
-	"git.charm2012.local/gitbucket/Charm/api2go/examples/storage"
+	"git.charm2012.local/Charm/api2go"
+	"git.charm2012.local/Charm/api2go/examples/model"
+	"git.charm2012.local/Charm/api2go/examples/resolver"
+	"git.charm2012.local/Charm/api2go/examples/resource"
+	"git.charm2012.local/Charm/api2go/examples/storage"
 	"github.com/julienschmidt/httprouter"
 )
 

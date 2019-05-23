@@ -5,7 +5,7 @@ package api2go
 import (
 	"log"
 
-	"git.charm2012.local/gitbucket/Charm/api2go/routing"
+	"git.charm2012.local/Charm/api2go/routing"
 	"github.com/gorilla/mux"
 )
 
