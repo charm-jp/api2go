@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/gedex/inflector"
+	"github.com/charm-jp/inflector"
 )
 
 // https://github.com/golang/lint/blob/3d26dc39376c307203d3a221bada26816b3073cf/lint.go#L482
