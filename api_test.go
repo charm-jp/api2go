@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"strings"
 
-	"git.charm2012.local/Charm/api2go/jsonapi"
-	"git.charm2012.local/Charm/api2go/routing"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
+	"gitlab.dev.charm.internal/charm/api2go/routing"
 	"gopkg.in/guregu/null.v2"
 )
 

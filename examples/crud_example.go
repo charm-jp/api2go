@@ -45,12 +45,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.charm2012.local/Charm/api2go"
-	"git.charm2012.local/Charm/api2go/examples/model"
-	"git.charm2012.local/Charm/api2go/examples/resolver"
-	"git.charm2012.local/Charm/api2go/examples/resource"
-	"git.charm2012.local/Charm/api2go/examples/storage"
 	"github.com/julienschmidt/httprouter"
+	"gitlab.dev.charm.internal/charm/api2go"
+	"gitlab.dev.charm.internal/charm/api2go/examples/model"
+	"gitlab.dev.charm.internal/charm/api2go/examples/resolver"
+	"gitlab.dev.charm.internal/charm/api2go/examples/resource"
+	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
 )
 
 func main() {

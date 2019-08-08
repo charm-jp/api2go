@@ -9,12 +9,12 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"git.charm2012.local/Charm/api2go"
-	"git.charm2012.local/Charm/api2go/examples/model"
-	"git.charm2012.local/Charm/api2go/examples/resource"
-	"git.charm2012.local/Charm/api2go/examples/storage"
-	"git.charm2012.local/Charm/api2go/routing"
 	"github.com/gorilla/mux"
+	"gitlab.dev.charm.internal/charm/api2go"
+	"gitlab.dev.charm.internal/charm/api2go/examples/model"
+	"gitlab.dev.charm.internal/charm/api2go/examples/resource"
+	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
+	"gitlab.dev.charm.internal/charm/api2go/routing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

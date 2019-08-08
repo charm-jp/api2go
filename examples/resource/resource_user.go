@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strconv"
 
-	"git.charm2012.local/Charm/api2go"
-	"git.charm2012.local/Charm/api2go/examples/model"
-	"git.charm2012.local/Charm/api2go/examples/storage"
+	"gitlab.dev.charm.internal/charm/api2go"
+	"gitlab.dev.charm.internal/charm/api2go/examples/model"
+	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
 )
 
 // UserResource for api2go routes

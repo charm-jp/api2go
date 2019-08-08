@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"git.charm2012.local/Charm/api2go/jsonapi"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
 )
 
 type SomeData struct {

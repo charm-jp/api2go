@@ -1,9 +1,9 @@
 package main_test
 
 import (
-	"git.charm2012.local/Charm/api2go"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"gitlab.dev.charm.internal/charm/api2go"
 
 	"testing"
 )

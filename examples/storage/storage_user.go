@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.charm2012.local/Charm/api2go"
-	"git.charm2012.local/Charm/api2go/examples/model"
+	"gitlab.dev.charm.internal/charm/api2go"
+	"gitlab.dev.charm.internal/charm/api2go/examples/model"
 )
 
 // NewUserStorage initializes the storage

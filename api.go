@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"git.charm2012.local/Charm/api2go/jsonapi"
-	"git.charm2012.local/Charm/api2go/routing"
+	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
+	"gitlab.dev.charm.internal/charm/api2go/routing"
 )
 
 const (
