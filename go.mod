@@ -3,7 +3,7 @@ module gitlab.dev.charm.internal/charm/api2go
 go 1.12
 
 require (
-	github.com/charm-jp/inflector v0.0.0-20190911074353-be4f42645925
+	github.com/charm-jp/inflector v0.0.0-20190911074552-4a6be19c852c
 	github.com/gin-gonic/gin v1.4.0
 	github.com/gorilla/mux v1.7.2
 	github.com/julienschmidt/httprouter v1.2.0
