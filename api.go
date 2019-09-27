@@ -742,38 +742,40 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 		return fmt.Errorf("Resource %s does not implement the ResourceUpdater interface", res.name)
 	}
 
-	id := params["id"]
-	obj, err := source.FindOne(id, buildRequest(c, r))
-	if err != nil {
-		return err
-	}
-
 	ctx, err := unmarshalRequest(r)
 	if err != nil {
 		return err
 	}
 
-	// we have to make the Result to a pointer to unmarshal into it
-	updatingObj := reflect.ValueOf(obj.Result())
-	if updatingObj.Kind() == reflect.Struct {
-		updatingObjPtr := reflect.New(reflect.TypeOf(obj.Result()))
-		updatingObjPtr.Elem().Set(updatingObj)
-		err = jsonapi.Unmarshal(ctx, updatingObjPtr.Interface())
-		updatingObj = updatingObjPtr.Elem()
-	} else {
-		err = jsonapi.Unmarshal(ctx, updatingObj.Interface())
+	id := params["id"]
+
+	// Ok this is weird again, but reflect.New produces a pointer, so we need the pure type without pointer,
+	// otherwise we would have a pointer pointer type that we don't want.
+	resourceType := res.resourceType
+	if resourceType.Kind() == reflect.Ptr {
+		resourceType = resourceType.Elem()
 	}
+	newObj := reflect.New(resourceType).Interface()
+
+	// Call InitializeObject if available to allow implementers change the object
+	// before calling Unmarshal.
+	if initSource, ok := source.(ObjectInitializer); ok {
+		initSource.InitializeObject(newObj)
+	}
+
+	err = jsonapi.Unmarshal(ctx, newObj)
 	if err != nil {
 		return NewHTTPError(nil, err.Error(), http.StatusNotAcceptable)
 	}
 
-	identifiable, ok := updatingObj.Interface().(jsonapi.MarshalIdentifier)
-	if !ok || identifiable.GetID() != id {
-		conflictError := errors.New("id in the resource does not match servers endpoint")
-		return NewHTTPError(conflictError, conflictError.Error(), http.StatusConflict)
-	}
+	var response Responder
 
-	response, err := source.Update(updatingObj.Interface(), buildRequest(c, r))
+	if res.resourceType.Kind() == reflect.Struct {
+		// we have to dereference the pointer if user wants to use non pointer values
+		response, err = source.Update(reflect.ValueOf(newObj).Elem().Interface(), buildRequest(c, r))
+	} else {
+		response, err = source.Update(newObj, buildRequest(c, r))
+	}
 
 	if err != nil {
 		return err
@@ -781,19 +783,16 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 
 	switch response.StatusCode() {
 	case http.StatusOK:
-		updated := response.Result()
-		if updated == nil {
-			internalResponse, err := source.FindOne(id, buildRequest(c, r))
-			if err != nil {
-				return err
-			}
-			updated = internalResponse.Result()
-			if updated == nil {
-				return fmt.Errorf("Expected FindOne to return one object of resource %s", res.name)
-			}
-
-			response = internalResponse
+		internalResponse, err := source.FindOne(id, buildRequest(c, r))
+		if err != nil {
+			return err
 		}
+		updated := internalResponse.Result()
+		if updated == nil {
+			return fmt.Errorf("Expected FindOne to return one object of resource %s", res.name)
+		}
+
+		response = internalResponse
 
 		return res.respondWith(response, info, http.StatusOK, w, r)
 	case http.StatusAccepted:
