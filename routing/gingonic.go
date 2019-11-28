@@ -1,5 +1,3 @@
-// +build gingonic,!gorillamux,!echo
-
 package routing
 
 import (

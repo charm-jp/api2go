@@ -8,6 +8,7 @@ github.com/charm-jp/inflector v0.0.0-20190911074353-be4f42645925/go.mod h1:aTj/T
 github.com/charm-jp/inflector v0.0.0-20190911074552-4a6be19c852c/go.mod h1:aTj/TOH3iXAd8Bq2Z+HviRP5sCZhmNHJDAG542OfwZw=
 github.com/charm-jp/inflector v0.0.0-20190911075121-b1899540d11d/go.mod h1:aTj/TOH3iXAd8Bq2Z+HviRP5sCZhmNHJDAG542OfwZw=
 github.com/charm-jp/inflector v0.0.0-20190911075331-9bc02fdbc955/go.mod h1:aTj/TOH3iXAd8Bq2Z+HviRP5sCZhmNHJDAG542OfwZw=
+github.com/charm-jp/inflector v0.0.0-20190911075709-5caff04028e4 h1:gNxhCva0ODqWDXCCo666NQ4/fsfW7DrAb3UAV375EBo=
 github.com/charm-jp/inflector v0.0.0-20190911075709-5caff04028e4/go.mod h1:aTj/TOH3iXAd8Bq2Z+HviRP5sCZhmNHJDAG542OfwZw=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
