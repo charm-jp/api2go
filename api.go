@@ -768,7 +768,8 @@ func (res *resource) handleUpdate(c APIContexter, w http.ResponseWriter, r *http
 		return NewHTTPError(nil, err.Error(), http.StatusNotAcceptable)
 	}
 
-	if newObj.(jsonapi.MarshalIdentifier).GetID() != id {
+	identifiable, ok := newObj.(jsonapi.MarshalIdentifier)
+	if !ok || identifiable.GetID() != id {
 		conflictError := errors.New("id in the resource does not match servers endpoint")
 		return NewHTTPError(conflictError, conflictError.Error(), http.StatusConflict)
 	}
