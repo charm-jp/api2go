@@ -5,9 +5,6 @@ import (
 	"time"
 )
 
-// APIContextAllocatorFunc to allow custom context implementations
-type APIContextAllocatorFunc func(*API) APIContexter
-
 // APIContexter embedding context.Context and requesting two helper functions
 type APIContexter interface {
 	context.Context
@@ -18,6 +15,7 @@ type APIContexter interface {
 
 // APIContext api2go context for handlers, nil implementations related to Deadline and Done.
 type APIContext struct {
+	context.Context
 	keys map[string]interface{}
 }
 
@@ -44,17 +42,17 @@ func (c *APIContext) Reset() {
 
 // Deadline implements net/context
 func (c *APIContext) Deadline() (deadline time.Time, ok bool) {
-	return
+	return c.Context.Deadline()
 }
 
 // Done implements net/context.
 func (c *APIContext) Done() <-chan struct{} {
-	return nil
+	return c.Context.Done()
 }
 
 // Err implements net/context
 func (c *APIContext) Err() error {
-	return nil
+	return c.Context.Err()
 }
 
 // Value implements net/context

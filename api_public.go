@@ -1,6 +1,7 @@
 package api2go
 
 import (
+	"context"
 	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
 	"gitlab.dev.charm.internal/charm/api2go/routing"
 	"net/http"
@@ -9,19 +10,20 @@ import (
 	"sync"
 )
 
-// HandlerFunc for api2go middlewares
-type HandlerFunc func(APIContexter, http.ResponseWriter, *http.Request)
+// HandlerFunc for api2go beforeMiddlewares
+type BeforeHandlerFunc func(context.Context, http.ResponseWriter, *http.Request) (context.Context, error)
+type AfterHandlerFunc func(context.Context, http.ResponseWriter, *http.Request, error) context.Context
 
 // API is a REST JSONAPI.
 type API struct {
-	ContentType      string
-	router           routing.Routeable
-	info             information
-	resources        []resource
-	middlewares      []HandlerFunc
-	contextPool      sync.Pool
-	contextAllocator APIContextAllocatorFunc
-	URLResolver      URLResolver
+	ContentType       string
+	router            routing.Routeable
+	info              information
+	resources         []resource
+	beforeMiddlewares []BeforeHandlerFunc
+	afterMiddlewares  []AfterHandlerFunc
+	contextPool       sync.Pool
+	URLResolver       URLResolver
 }
 
 // Handler returns the http.Handler instance for the API.
@@ -45,11 +47,6 @@ func (api API) Router() routing.Routeable {
 	return api.router
 }
 
-// SetContextAllocator custom implementation for making contexts
-func (api *API) SetContextAllocator(allocator APIContextAllocatorFunc) {
-	api.contextAllocator = allocator
-}
-
 // AddResource registers a data source for the given resource
 // At least the CRUD interface must be implemented, all the other interfaces are optional.
 // `resource` should be either an empty struct instance such as `Post{}` or a pointer to
@@ -58,10 +55,16 @@ func (api *API) AddResource(prototype jsonapi.MarshalIdentifier, source interfac
 	api.addResource(prototype, source)
 }
 
-// UseMiddleware registers middlewares that implement the api2go.HandlerFunc
+// UseBeforeMiddleware registers beforeMiddlewares that implement the api2go.HandlerFunc
 // Middleware is run before any generated routes.
-func (api *API) UseMiddleware(middleware ...HandlerFunc) {
-	api.middlewares = append(api.middlewares, middleware...)
+func (api *API) UseBeforeMiddleware(middleware ...BeforeHandlerFunc) {
+	api.beforeMiddlewares = append(api.beforeMiddlewares, middleware...)
+}
+
+// UseAfterMiddleware registers AfterMiddlewares that implement the api2go.HandlerFunc
+// Middleware is run After any generated routes.
+func (api *API) UseAfterMiddleware(middleware ...AfterHandlerFunc) {
+	api.afterMiddlewares = append(api.afterMiddlewares, middleware...)
 }
 
 // NewAPIVersion can be used to chain an additional API version to the routing of a previous
@@ -128,19 +131,12 @@ func newAPI(prefix string, resolver URLResolver, router routing.Routeable) *API 
 	info := information{prefix: prefix, resolver: resolver}
 
 	api := &API{
-		ContentType:      defaultContentTypHeader,
-		router:           router,
-		info:             info,
-		middlewares:      make([]HandlerFunc, 0),
-		contextAllocator: nil,
-		URLResolver:      info.resolver,
-	}
-
-	api.contextPool.New = func() interface{} {
-		if api.contextAllocator != nil {
-			return api.contextAllocator(api)
-		}
-		return api.allocateDefaultContext()
+		ContentType:       defaultContentTypHeader,
+		router:            router,
+		info:              info,
+		beforeMiddlewares: make([]BeforeHandlerFunc, 0),
+		afterMiddlewares:  make([]AfterHandlerFunc, 0),
+		URLResolver:       info.resolver,
 	}
 
 	return api
