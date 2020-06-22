@@ -1,6 +1,7 @@
 package api2go
 
 import (
+	"context"
 	"net/http"
 
 	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
@@ -10,6 +11,11 @@ import (
 type ResourceGetter interface {
 	// FindOne returns an object by its ID
 	// Possible Responder success status code 200
+	FindOne(ctx context.Context, ID string, req Request) (Responder, error)
+}
+
+// Deprecated: Please use ResourceGetter which includes context support
+type ResourceGetterLegacy interface {
 	FindOne(ID string, req Request) (Responder, error)
 }
 
@@ -28,6 +34,11 @@ type ResourceCreator interface {
 	// - 202 Accepted: Processing is delayed, return nothing
 	// - 204 No Content: Resource created with a client generated ID, and no fields were modified by
 	//   the server
+	Create(ctx context.Context, obj interface{}, req Request) (Responder, error)
+}
+
+// Deprecated: Please use ResourceCreator which includes context support
+type ResourceCreatorLegacy interface {
 	Create(obj interface{}, req Request) (Responder, error)
 }
 
@@ -38,6 +49,11 @@ type ResourceDeleter interface {
 	// - 200 OK: Deletion was a success, returns meta information, currently not implemented! Do not use this
 	// - 202 Accepted: Processing is delayed, return nothing
 	// - 204 No Content: Deletion was successful, return nothing
+	Delete(ctx context.Context, id string, req Request) (Responder, error)
+}
+
+// Deprecated: Please use ResourceDeleter which includes context support
+type ResourceDeleterLegacy interface {
 	Delete(id string, req Request) (Responder, error)
 }
 
@@ -50,6 +66,12 @@ type ResourceUpdater interface {
 	// - 200 OK: Update successful, however some field(s) were changed, returns updates source
 	// - 202 Accepted: Processing is delayed, return nothing
 	// - 204 No Content: Update was successful, no fields were changed by the server, return nothing
+	Update(ctx context.Context, obj interface{}, req Request) (Responder, error)
+}
+
+// Deprecated: Please use ResourceUpdater which includes context support
+type ResourceUpdaterLegacy interface {
+	ResourceGetterLegacy
 	Update(obj interface{}, req Request) (Responder, error)
 }
 
@@ -67,11 +89,22 @@ type Pagination struct {
 // page[number] AND page[size]
 // OR page[offset] AND page[limit]
 type PaginatedFindAll interface {
+	PaginatedFindAll(ctx context.Context, req Request) (totalCount uint, response Responder, err error)
+}
+
+// Deprecated: Please use PaginatedFindAllLegacy which includes context support
+type PaginatedFindAllLegacy interface {
 	PaginatedFindAll(req Request) (totalCount uint, response Responder, err error)
 }
 
 // The FindAll interface can be optionally implemented to fetch all records at once.
 type FindAll interface {
+	// FindAll returns all objects
+	FindAll(ctx context.Context, req Request) (Responder, error)
+}
+
+// Deprecated: Please use FindAll which includes context support
+type FindAllLegacy interface {
 	// FindAll returns all objects
 	FindAll(req Request) (Responder, error)
 }
