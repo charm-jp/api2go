@@ -778,7 +778,7 @@ func (res *resource) handleCreate(ctx context.Context, w http.ResponseWriter, r 
 		w.Header().Set("Location", "/"+res.name+"/"+result.GetID())
 	}
 
-	// handle 200 status codes
+	// handle 200 Status codes
 	switch response.StatusCode() {
 	case http.StatusCreated:
 		return res.respondWith(response, info, http.StatusCreated, w, r)
@@ -789,7 +789,7 @@ func (res *resource) handleCreate(ctx context.Context, w http.ResponseWriter, r 
 		w.WriteHeader(response.StatusCode())
 		return nil
 	default:
-		return fmt.Errorf("invalid status code %d from resource %s for method Create", response.StatusCode(), res.name)
+		return fmt.Errorf("invalid Status code %d from resource %s for method Create", response.StatusCode(), res.name)
 	}
 }
 
@@ -878,7 +878,7 @@ func (res *resource) handleUpdate(ctx context.Context, w http.ResponseWriter, r 
 		w.WriteHeader(http.StatusNoContent)
 		return nil
 	default:
-		return fmt.Errorf("invalid status code %d from resource %s for method Update", response.StatusCode(), res.name)
+		return fmt.Errorf("invalid Status code %d from resource %s for method Update", response.StatusCode(), res.name)
 	}
 }
 
@@ -1142,7 +1142,7 @@ func (res *resource) handleDelete(ctx context.Context, w http.ResponseWriter, r 
 		w.WriteHeader(http.StatusNoContent)
 		return nil
 	default:
-		return fmt.Errorf("invalid status code %d from resource %s for method Delete", response.StatusCode(), res.name)
+		return fmt.Errorf("invalid Status code %d from resource %s for method Delete", response.StatusCode(), res.name)
 	}
 }
 
@@ -1309,7 +1309,7 @@ func replaceAttributes(query *map[string][]string, entry *jsonapi.Data) map[stri
 func handleError(err error, w http.ResponseWriter, r *http.Request, contentType string) {
 	log.Println(err)
 	if e, ok := err.(HTTPError); ok {
-		writeResult(w, []byte(marshalHTTPError(e)), e.status, contentType)
+		writeResult(w, []byte(marshalHTTPError(e)), e.Status, contentType)
 		return
 
 	}
