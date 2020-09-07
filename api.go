@@ -284,7 +284,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 		if err != nil {
 			handleError(err, w, r, api.ContentType)
 		} else {
-			err := res.handleIndex(ctx, w, r, *info)
+			err = res.handleIndex(ctx, w, r, *info)
 
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
@@ -317,7 +317,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
 			} else {
-				err := res.handleRead(ctx, w, r, params, *info)
+				err = res.handleRead(ctx, w, r, params, *info)
 
 				if err != nil {
 					handleError(err, w, r, api.ContentType)
@@ -341,7 +341,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					if err != nil {
 						handleError(err, w, r, api.ContentType)
 					} else {
-						err := res.handleReadRelation(ctx, w, r, params, *info, relation)
+						err = res.handleReadRelation(ctx, w, r, params, *info, relation)
 
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
@@ -360,7 +360,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					if err != nil {
 						handleError(err, w, r, api.ContentType)
 					} else {
-						err := res.handleLinked(api, ctx, w, r, params, relation, *info)
+						err = res.handleLinked(api, ctx, w, r, params, relation, *info)
 
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
@@ -379,7 +379,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					if err != nil {
 						handleError(err, w, r, api.ContentType)
 					} else {
-						err := res.handleReplaceRelation(ctx, w, r, params, *info, relation)
+						err = res.handleReplaceRelation(ctx, w, r, params, *info, relation)
 
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
@@ -400,7 +400,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
 						} else {
-							err := res.handleAddToManyRelation(ctx, w, r, params, *info, relation)
+							err = res.handleAddToManyRelation(ctx, w, r, params, *info, relation)
 
 							if err != nil {
 								handleError(err, w, r, api.ContentType)
@@ -419,7 +419,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						if err != nil {
 							handleError(err, w, r, api.ContentType)
 						} else {
-							err := res.handleDeleteToManyRelation(ctx, w, r, params, *info, relation)
+							err = res.handleDeleteToManyRelation(ctx, w, r, params, *info, relation)
 
 							if err != nil {
 								handleError(err, w, r, api.ContentType)
@@ -443,7 +443,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
 			} else {
-				err := res.handleCreate(ctx, w, r, info.prefix, *info)
+				err = res.handleCreate(ctx, w, r, info.prefix, *info)
 
 				if err != nil {
 					handleError(err, w, r, api.ContentType)
@@ -464,7 +464,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
 			} else {
-				err := res.handleDelete(ctx, w, r, params, *info)
+				err = res.handleDelete(ctx, w, r, params, *info)
 
 				if err != nil {
 					handleError(err, w, r, api.ContentType)
@@ -485,7 +485,7 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			if err != nil {
 				handleError(err, w, r, api.ContentType)
 			} else {
-				err := res.handleUpdate(ctx, w, r, params, *info)
+				err = res.handleUpdate(ctx, w, r, params, *info)
 
 				if err != nil {
 					handleError(err, w, r, api.ContentType)
