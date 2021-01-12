@@ -12,7 +12,7 @@ import (
 
 // HandlerFunc for api2go beforeMiddlewares
 type BeforeHandlerFunc func(context.Context, http.ResponseWriter, *http.Request) (context.Context, error)
-type AfterHandlerFunc func(context.Context, http.ResponseWriter, *http.Request, error) context.Context
+type AfterHandlerFunc func(context.Context, http.ResponseWriter, *http.Request, error) (context.Context, error)
 
 // API is a REST JSONAPI.
 type API struct {

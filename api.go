@@ -208,10 +208,19 @@ func (api *API) beforeMiddleware(ctx context.Context, w http.ResponseWriter, r *
 }
 
 // afterMiddleware executes each after middleware in turn
-func (api *API) afterMiddleware(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) {
+func (api *API) afterMiddleware(ctx context.Context, w http.ResponseWriter, r *http.Request, err error) error {
 	for _, middleware := range api.afterMiddlewares {
-		ctx = middleware(ctx, w, r, err)
+		var e error
+
+		ctx, e = middleware(ctx, w, r, err)
+
+		// Don't want to overwrite an error with nil if a aftermiddleware doesn't throw one
+		if e != nil {
+			err = e
+		}
 	}
+
+	return err
 }
 
 func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interface{}) *resource {
@@ -267,31 +276,31 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 	api.router.Handle("OPTIONS", baseURL, func(w http.ResponseWriter, r *http.Request, _ map[string]string, context map[string]interface{}) {
 		ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-		if err != nil {
-			handleError(err, w, r, api.ContentType)
-		} else {
+		if err == nil {
 			w.Header().Set("Allow", strings.Join(getAllowedMethods(source, true), ","))
 			w.WriteHeader(http.StatusNoContent)
 		}
 
-		api.afterMiddleware(ctx, w, r, nil)
+		err = api.afterMiddleware(ctx, w, r, nil)
+
+		if err != nil {
+			handleError(err, w, r, api.ContentType)
+		}
 	})
 
 	api.router.Handle("GET", baseURL, func(w http.ResponseWriter, r *http.Request, _ map[string]string, context map[string]interface{}) {
 		info := requestInfo(r, api)
 		ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-		if err != nil {
-			handleError(err, w, r, api.ContentType)
-		} else {
+		if err == nil {
 			err = res.handleIndex(ctx, w, r, *info)
-
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			}
 		}
 
-		api.afterMiddleware(ctx, w, r, err)
+		err = api.afterMiddleware(ctx, w, r, err)
+
+		if err != nil {
+			handleError(err, w, r, api.ContentType)
+		}
 	})
 
 	_, getter := source.(ResourceGetter)
@@ -300,31 +309,31 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 		api.router.Handle("OPTIONS", baseURL+"/:id", func(w http.ResponseWriter, r *http.Request, _ map[string]string, context map[string]interface{}) {
 			ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			} else {
+			if err == nil {
 				w.Header().Set("Allow", strings.Join(getAllowedMethods(source, false), ","))
 				w.WriteHeader(http.StatusNoContent)
 			}
 
-			api.afterMiddleware(ctx, w, r, nil)
+			err = api.afterMiddleware(ctx, w, r, err)
+
+			if err != nil {
+				handleError(err, w, r, api.ContentType)
+			}
 		})
 
 		api.router.Handle("GET", baseURL+"/:id", func(w http.ResponseWriter, r *http.Request, params map[string]string, context map[string]interface{}) {
 			info := requestInfo(r, api)
 			ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			} else {
+			if err == nil {
 				err = res.handleRead(ctx, w, r, params, *info)
-
-				if err != nil {
-					handleError(err, w, r, api.ContentType)
-				}
 			}
 
-			api.afterMiddleware(ctx, w, r, err)
+			err = api.afterMiddleware(ctx, w, r, err)
+
+			if err != nil {
+				handleError(err, w, r, api.ContentType)
+			}
 		})
 	}
 
@@ -338,17 +347,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					info := requestInfo(r, api)
 					ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-					if err != nil {
-						handleError(err, w, r, api.ContentType)
-					} else {
+					if err == nil {
 						err = res.handleReadRelation(ctx, w, r, params, *info, relation)
-
-						if err != nil {
-							handleError(err, w, r, api.ContentType)
-						}
 					}
 
-					api.afterMiddleware(ctx, w, r, err)
+					err = api.afterMiddleware(ctx, w, r, err)
+
+					if err != nil {
+						handleError(err, w, r, api.ContentType)
+					}
 				}
 			}(relation))
 
@@ -357,17 +364,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					info := requestInfo(r, api)
 					ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-					if err != nil {
-						handleError(err, w, r, api.ContentType)
-					} else {
+					if err == nil {
 						err = res.handleLinked(api, ctx, w, r, params, relation, *info)
-
-						if err != nil {
-							handleError(err, w, r, api.ContentType)
-						}
 					}
 
-					api.afterMiddleware(ctx, w, r, err)
+					err = api.afterMiddleware(ctx, w, r, err)
+
+					if err != nil {
+						handleError(err, w, r, api.ContentType)
+					}
 				}
 			}(relation))
 
@@ -376,17 +381,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 					info := requestInfo(r, api)
 					ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-					if err != nil {
-						handleError(err, w, r, api.ContentType)
-					} else {
+					if err == nil {
 						err = res.handleReplaceRelation(ctx, w, r, params, *info, relation)
-
-						if err != nil {
-							handleError(err, w, r, api.ContentType)
-						}
 					}
 
-					api.afterMiddleware(ctx, w, r, err)
+					err = api.afterMiddleware(ctx, w, r, err)
+
+					if err != nil {
+						handleError(err, w, r, api.ContentType)
+					}
 				}
 			}(relation))
 
@@ -397,17 +400,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						info := requestInfo(r, api)
 						ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-						if err != nil {
-							handleError(err, w, r, api.ContentType)
-						} else {
+						if err == nil {
 							err = res.handleAddToManyRelation(ctx, w, r, params, *info, relation)
-
-							if err != nil {
-								handleError(err, w, r, api.ContentType)
-							}
 						}
 
-						api.afterMiddleware(ctx, w, r, err)
+						err = api.afterMiddleware(ctx, w, r, err)
+
+						if err != nil {
+							handleError(err, w, r, api.ContentType)
+						}
 					}
 				}(relation))
 
@@ -416,17 +417,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 						info := requestInfo(r, api)
 						ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-						if err != nil {
-							handleError(err, w, r, api.ContentType)
-						} else {
+						if err == nil {
 							err = res.handleDeleteToManyRelation(ctx, w, r, params, *info, relation)
-
-							if err != nil {
-								handleError(err, w, r, api.ContentType)
-							}
 						}
 
-						api.afterMiddleware(ctx, w, r, err)
+						err = api.afterMiddleware(ctx, w, r, err)
+
+						if err != nil {
+							handleError(err, w, r, api.ContentType)
+						}
 					}
 				}(relation))
 			}
@@ -440,17 +439,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			info := requestInfo(r, api)
 			ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			} else {
+			if err == nil {
 				err = res.handleCreate(ctx, w, r, info.prefix, *info)
-
-				if err != nil {
-					handleError(err, w, r, api.ContentType)
-				}
 			}
 
-			api.afterMiddleware(ctx, w, r, err)
+			err = api.afterMiddleware(ctx, w, r, err)
+
+			if err != nil {
+				handleError(err, w, r, api.ContentType)
+			}
 		})
 	}
 
@@ -461,17 +458,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			info := requestInfo(r, api)
 			ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			} else {
+			if err == nil {
 				err = res.handleDelete(ctx, w, r, params, *info)
-
-				if err != nil {
-					handleError(err, w, r, api.ContentType)
-				}
 			}
 
-			api.afterMiddleware(ctx, w, r, err)
+			err = api.afterMiddleware(ctx, w, r, err)
+
+			if err != nil {
+				handleError(err, w, r, api.ContentType)
+			}
 		})
 	}
 
@@ -482,17 +477,15 @@ func (api *API) addResource(prototype jsonapi.MarshalIdentifier, source interfac
 			info := requestInfo(r, api)
 			ctx, err := api.beforeMiddleware(populateContext(r.Context(), context), w, r)
 
-			if err != nil {
-				handleError(err, w, r, api.ContentType)
-			} else {
+			if err == nil {
 				err = res.handleUpdate(ctx, w, r, params, *info)
-
-				if err != nil {
-					handleError(err, w, r, api.ContentType)
-				}
 			}
 
-			api.afterMiddleware(ctx, w, r, err)
+			err = api.afterMiddleware(ctx, w, r, err)
+
+			if err != nil {
+				handleError(err, w, r, api.ContentType)
+			}
 		})
 	}
 
