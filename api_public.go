@@ -2,8 +2,8 @@ package api2go
 
 import (
 	"context"
-	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
-	"gitlab.dev.charm.internal/charm/api2go/routing"
+	"github.com/charm-jp/api2go/jsonapi"
+	"github.com/charm-jp/api2go/routing"
 	"net/http"
 	"reflect"
 	"strings"

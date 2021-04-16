@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"gitlab.dev.charm.internal/charm/api2go/jsonapi"
+	"github.com/charm-jp/api2go/jsonapi"
 )
 
 // The ResourceGetter interface MUST be implemented in order to generate the single GET route and related

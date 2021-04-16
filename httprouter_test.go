@@ -5,7 +5,7 @@ package api2go
 import (
 	"log"
 
-	"gitlab.dev.charm.internal/charm/api2go/routing"
+	"github.com/charm-jp/api2go/routing"
 )
 
 func newTestRouter() routing.Routeable {

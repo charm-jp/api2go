@@ -1,4 +1,4 @@
-module gitlab.dev.charm.internal/charm/api2go
+module github.com/charm-jp/api2go
 
 go 1.12
 

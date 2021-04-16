@@ -5,12 +5,12 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"github.com/charm-jp/api2go"
+	"github.com/charm-jp/api2go/examples/model"
+	"github.com/charm-jp/api2go/examples/resource"
+	"github.com/charm-jp/api2go/examples/storage"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gitlab.dev.charm.internal/charm/api2go"
-	"gitlab.dev.charm.internal/charm/api2go/examples/model"
-	"gitlab.dev.charm.internal/charm/api2go/examples/resource"
-	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
 )
 
 // there are a lot of functions because each test can be run individually and sets up the complete

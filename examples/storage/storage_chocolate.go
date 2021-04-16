@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"gitlab.dev.charm.internal/charm/api2go/examples/model"
+	"github.com/charm-jp/api2go/examples/model"
 )
 
 // sorting

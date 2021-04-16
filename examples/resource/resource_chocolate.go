@@ -4,9 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"gitlab.dev.charm.internal/charm/api2go"
-	"gitlab.dev.charm.internal/charm/api2go/examples/model"
-	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
+	"github.com/charm-jp/api2go"
+	"github.com/charm-jp/api2go/examples/model"
+	"github.com/charm-jp/api2go/examples/storage"
 )
 
 // ChocolateResource for api2go routes

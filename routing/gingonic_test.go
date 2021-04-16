@@ -11,12 +11,12 @@ import (
 	"strings"
 	"unsafe"
 
+	"github.com/charm-jp/api2go"
+	"github.com/charm-jp/api2go/examples/model"
+	"github.com/charm-jp/api2go/examples/resource"
+	"github.com/charm-jp/api2go/examples/storage"
+	"github.com/charm-jp/api2go/routing"
 	"github.com/gin-gonic/gin"
-	"gitlab.dev.charm.internal/charm/api2go"
-	"gitlab.dev.charm.internal/charm/api2go/examples/model"
-	"gitlab.dev.charm.internal/charm/api2go/examples/resource"
-	"gitlab.dev.charm.internal/charm/api2go/examples/storage"
-	"gitlab.dev.charm.internal/charm/api2go/routing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
